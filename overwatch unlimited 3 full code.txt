@@ -5533,10 +5533,9 @@ rule("Genji Faster melee")
 			Press Button(Event Player, Button(Melee));
 			Wait(0.500, Ignore Condition);
 		Else If(Event Player.selected_hero_list_number == 1 && Event Player.Is_Using_Ultimate);
-			Press Button(Event Player, Button(Melee));
-			Set Ability Cooldown(Event Player, Button(Melee), False);
+			Damage(Filtered Array(Players Within Radius(Event Player, 4, Opposite Team Of(Team Of(Event Player)), Off), Is In View Angle(
+				Event Player, Current Array Element, 60)), Event Player, 30);
 			Wait(0.120, Ignore Condition);
-			Cancel Primary Action(Event Player);
 		End;
 		Loop If Condition Is True;
 	}
@@ -5874,8 +5873,8 @@ rule("All soldier Leonidas faster melee")
 	actions
 	{
 		If(!Event Player.Y && Event Player.selected_hero_list_number == 3);
-			Set Ability Cooldown(Event Player, Button(Melee), 0);
-			Press Button(Event Player, Button(Melee));
+			Damage(Filtered Array(Players Within Radius(Event Player, 4, Opposite Team Of(Team Of(Event Player)), Off), Is In View Angle(
+				Event Player, Current Array Element, 60)), Event Player, 30);
 			"it was variable M before"
 			Wait(Health(Event Player) / 600, Ignore Condition);
 			Cancel Primary Action(Event Player);
