@@ -693,6 +693,7 @@ subroutines
 	37: tawara_tota_remove_armor
 	38: tesla_ab1_loop
 	39: karna_laser_loop
+	40: fast_melee_subroutine
 	41: ozymandias_ab2_loop
 	42: salome_setup_ab2
 	43: salome_ab2_damage_loop
@@ -5533,8 +5534,7 @@ rule("Genji Faster melee")
 			Press Button(Event Player, Button(Melee));
 			Wait(0.500, Ignore Condition);
 		Else If(Event Player.selected_hero_list_number == 1 && Event Player.Is_Using_Ultimate);
-			Damage(Filtered Array(Players Within Radius(Event Player, 4, Opposite Team Of(Team Of(Event Player)), Off), Is In View Angle(
-				Event Player, Current Array Element, 60)), Event Player, 30);
+			Call Subroutine(fast_melee_subroutine);
 			Wait(0.120, Ignore Condition);
 		End;
 		Loop If Condition Is True;
@@ -5873,8 +5873,7 @@ rule("All soldier Leonidas faster melee")
 	actions
 	{
 		If(!Event Player.Y && Event Player.selected_hero_list_number == 3);
-			Damage(Filtered Array(Players Within Radius(Event Player, 4, Opposite Team Of(Team Of(Event Player)), Off), Is In View Angle(
-				Event Player, Current Array Element, 60)), Event Player, 30);
+			Call Subroutine(fast_melee_subroutine);
 			"it was variable M before"
 			Wait(Health(Event Player) / 600, Ignore Condition);
 			Cancel Primary Action(Event Player);
@@ -7098,11 +7097,9 @@ rule("All Hanzo Ab1")
 			Apply Impulse(Filtered Array(Players in View Angle(Event Player, Opposite Team Of(Team Of(Event Player)), 65), Distance Between(
 				Event Player, Current Array Element) <= 7), Facing Direction Of(Event Player), 55, To World, Cancel Contrary Motion);
 		Else If(Event Player.selected_hero_list_number == 5);
-			For Player Variable(Event Player, for_loop, 0, 8, True);
-				Set Ability Cooldown(Event Player, Button(Melee), False);
-				Press Button(Event Player, Button(Melee));
+			For Player Variable(Event Player, for_loop, 0, 6, True);
+				Call Subroutine(fast_melee_subroutine);
 				Wait(0.016, Ignore Condition);
-				Cancel Primary Action(Event Player);
 			End;
 			Set Ability Cooldown(Event Player, Button(Ability 1), 5);
 		Else If(Event Player.selected_hero_list_number == 6);
@@ -14179,5 +14176,20 @@ rule("ZENYATTA tristan Sec.Fire Attack PLACEHOLDER")
 		Set Damage Dealt(Event Player, 20);
 		Wait(1.500, Ignore Condition);
 		Set Damage Dealt(Event Player, 90);
+	}
+}
+
+rule("Rule 311")
+{
+	event
+	{
+		Subroutine;
+		fast_melee_subroutine;
+	}
+
+	actions
+	{
+		Damage(Filtered Array(Players Within Radius(Event Player, 4, Opposite Team Of(Team Of(Event Player)), Off), Is In View Angle(
+			Event Player, Current Array Element, 60)), Event Player, 30);
 	}
 }
