@@ -1495,7 +1495,7 @@ rule("Reset when spawning or re entering spawn")
 		Create In-World Text(Local Player, Custom String("- - - - - - - TUTORIAL - - - - - - -\n{0}", Custom String(
 			"Objective: Kill the enemies\r\n(back) {1} : {2} (forward)\r\n{0}", Custom String(
 			"\r\nPress ({1}) to select the class\r\nCrouch 2s in Spawn for Random Class\r\n{0}", Custom String(
-			"Game has 114! Custom Hero SubClasses\r\n{0}", Custom String("All abilities are explained at https://workshop.codes/RTMJ2\r")),
+			"Game has 115! Custom Hero SubClasses\r\n{0}", Custom String("All abilities are explained at https://workshop.codes/RTMJ2\r")),
 			Input Binding String(Button(Interact))), Input Binding String(Button(Primary Fire)), Input Binding String(Button(
 			Secondary Fire)))), Facing Direction Of(Event Player) + Eye Position(Event Player), True, Clip Against Surfaces,
 			Visible To Position and String, Color(White), Default Visibility);
@@ -12431,32 +12431,17 @@ rule("ULTIMATE SETUP #3: Echo, Roadhog, Mei, Sigma, Bastion, Briggite, Reaper, R
 				Event Player.Is_Using_Ultimate = True;
 				While(Event Player.Is_Using_Ultimate && !Is Firing Secondary(Event Player) && Ultimate Charge Percent(Event Player) > 0);
 					Play Effect(Remove From Array(All Players(All Teams), Event Player), Good Pickup Effect, Color(White), Event Player, 1);
-					Set Ultimate Charge(Event Player, Ultimate Charge Percent(Event Player) - 3.500);
-					Event Player.D += 20;
-					Set Status(Event Player, Null, Rooted, 0.300);
-					Wait(0.250, Ignore Condition);
-					Skip If(Is Firing Secondary(Event Player), 2);
+					Set Ultimate Charge(Event Player, Ultimate Charge Percent(Event Player) - 1.500);
+					Event Player.D += 10;
+					Set Status(Event Player, Null, Rooted, 0.150);
+					Wait(0.100, Ignore Condition);
 				End;
-				Wait Until(Is Firing Secondary(Event Player) || !Event Player.Is_Using_Ultimate, 99999);
-				Event Player.Z = Eye Position(Event Player);
+				Skip If(!Event Player.Is_Using_Ultimate, 4);
+				Wait Until(!Event Player.Is_Using_Ultimate || Is Firing Secondary(Event Player), 10);
 				Event Player.Is_Using_Ultimate = False;
-				Call Subroutine(raycast_hit_position1);
-				Create Beam Effect(All Players(All Teams), Good Beam, Evaluate Once(Event Player), Event Player.raycast_hit_position, Color(White),
-					None);
-				Event Player.Effects[3] = Last Created Entity;
-				Create Effect(All Players(All Teams), Sphere, Color(Blue), Update Every Frame(Event Player.Z), 4, Visible To Position and Radius);
-				Event Player.Effects[2] = Last Created Entity;
-				Chase Player Variable At Rate(Event Player, Z, Event Player.raycast_hit_position, 40, Destination and Rate);
-				Wait Until(Is Dead(Event Player) || Is In Spawn Room(Event Player)
-					|| Event Player.Z == Event Player.raycast_hit_position || Count Of(Filtered Array(Players Within Radius(Event Player.Z, 4,
-					Opposite Team Of(Team Of(Event Player)), Surfaces), Array Contains(All Heroes, Hero Of(Current Array Element)))) > 0, 99999);
-				Damage(Players Within Radius(Event Player.Z, 5, Opposite Team Of(Team Of(Event Player)), Surfaces), Event Player, Event Player.D);
-				Play Effect(All Players(All Teams), Bad Explosion, Color(White), Event Player.raycast_hit_position, 6);
-				Play Effect(All Players(All Teams), Explosion Sound, Color(White), Event Player.raycast_hit_position, 110);
+				Create Projectile(Zarya Graviton, Event Player, Null, Null, To World, Damage, All Teams, Event Player.D, 0.850, 8, Bad Explosion,
+					Explosion Sound, 0.100, 20, 13, 0, 0, 0);
 				Wait(0.100, Ignore Condition);
-				Stop Chasing Player Variable(Event Player, Z);
-				Destroy Effect(Event Player.Effects[2]);
-				Destroy Effect(Event Player.Effects[3]);
 				Event Player.D = 100;
 			Else If(Event Player.selected_hero_list_number == 1);
 				Small Message(All Players(All Teams), Custom String("{0} It's morbin' Time", Hero Icon String(Hero Of(Event Player))));
