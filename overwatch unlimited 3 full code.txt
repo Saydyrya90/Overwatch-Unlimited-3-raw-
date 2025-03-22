@@ -151,8 +151,8 @@ settings
 
 			Freja
 			{
-				Damage Dealt: 130%
-				Health: 130%
+				Damage Dealt: 145%
+				Health: 145%
 				Ultimate Generation - Combat Bola Shot: 130%
 				Ultimate Generation Bola Shot: 125%
 			}
@@ -14172,7 +14172,7 @@ rule("ZENYATTA tristan Sec.Fire Attack PLACEHOLDER")
 	}
 }
 
-rule("Rule 311")
+rule("Fast melee subroutine FIX")
 {
 	event
 	{
@@ -14184,5 +14184,55 @@ rule("Rule 311")
 	{
 		Damage(Filtered Array(Players Within Radius(Event Player, 4, Opposite Team Of(Team Of(Event Player)), Off), Is In View Angle(
 			Event Player, Current Array Element, 60)), Event Player, 30);
+	}
+}
+
+rule("Rule 312")
+{
+	event
+	{
+		Player Dealt Damage;
+		All;
+		Freja;
+	}
+
+	actions
+	{
+		If(Event Ability == Button(Secondary Fire));
+			Heal(Event Player, Null, 50);
+		Else If(Event Ability == Button(Ultimate));
+			Set Status(Event Player, Null, Frozen, 0.600);
+	}
+}
+
+rule("Rule 313")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		Freja;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Primary Fire)) == True;
+		Is Button Held(Event Player, Button(Secondary Fire)) == True;
+	}
+
+	actions
+	{
+		Call Subroutine(raycast_hit_position1);
+		Modify Player Variable(Event Player, A, Append To Array, Event Player.raycast_hit_position);
+		If(Count Of(Event Player.A) >= 3);
+			For Player Variable(Event Player, for_loop_2, 0, 3, 1);
+				Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Event Player.A[Event Player.for_loop_2], 2);
+				Damage(Players Within Radius(Event Player.A[Event Player.for_loop_2], 2, Opposite Team Of(Team Of(Event Player)), Surfaces),
+					Event Player, 65);
+				Wait(0.250, Ignore Condition);
+			End;
+			Event Player.A = Empty Array;
+		End;
+		Wait(0.600, Ignore Condition);
 	}
 }
