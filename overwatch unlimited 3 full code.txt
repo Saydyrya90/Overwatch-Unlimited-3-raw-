@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Battle with 115 Custom Hero Classes\r\nAll of the names are anime references or jokes\r\nhttps://discord.com/invite/VKphWxqvj3\r\n - updates and discussions\r\nhttps://workshop.codes/RTMJ2\r\n - All abilities explained\r\nCode: RTMJ2"
+		Description: "Battle with 116 Custom Hero Classes\r\nAll of the names are anime references or jokes\r\nhttps://discord.com/invite/VKphWxqvj3\r\n - updates and discussions\r\nhttps://workshop.codes/RTMJ2\r\n - All abilities explained\r\nCode: RTMJ2"
 		Mode Name: "Overwatch Unlimited™ 3"
 	}
 
@@ -149,6 +149,14 @@ settings
 				Ultimate Generation Duplicate: 110%
 			}
 
+			Freja
+			{
+				Damage Dealt: 130%
+				Health: 130%
+				Ultimate Generation - Combat Bola Shot: 130%
+				Ultimate Generation Bola Shot: 125%
+			}
+
 			Genji
 			{
 				Damage Received: 115%
@@ -173,18 +181,18 @@ settings
 				Damage Dealt: 130%
 				Health: 85%
 				Jagged Wall Cooldown Time: 90%
-				Jagged Wall Health Scalar: 400%
-				Jagged Wall Knockback Scalar: 
+				Jagged Wall Health: 400%
+				Jagged Wall Knockback: 
 				Jump Vertical Speed: 115%
 				Movement Gravity: 90%
 				Movement Speed: 110%
 				Spike Guard Movement Speed Penalty: 130%
-				Spike Guard Resource Cost Scalar: 90%
-				Spike Guard Resource Regeneration Scalar: 80%
+				Spike Guard Resource Cost: 90%
+				Spike Guard Resource Regeneration: 80%
 				Ultimate Generation - Combat Downpour: 170%
 				Ultimate Generation - Passive Downpour: 115%
 				Ultimate Generation Downpour: 145%
-				Violent Leap Distance Scalar: 130%
+				Violent Leap Distance: 130%
 			}
 
 			Illari
@@ -12439,8 +12447,8 @@ rule("ULTIMATE SETUP #3: Echo, Roadhog, Mei, Sigma, Bastion, Briggite, Reaper, R
 				Skip If(!Event Player.Is_Using_Ultimate, 4);
 				Wait Until(!Event Player.Is_Using_Ultimate || Is Firing Secondary(Event Player), 10);
 				Event Player.Is_Using_Ultimate = False;
-				Create Projectile(Zarya Graviton, Event Player, Null, Null, To World, Damage, All Teams, Event Player.D, 0.850, 8, Ring Explosion,
-					Explosion Sound, 0.100, 20, 13, 0, 0, 0);
+				Create Projectile(Zarya Graviton, Event Player, Null, Null, To World, Damage, All Teams, Event Player.D, 0.850, 8,
+					DVa Self Destruct Explosion Effect, Explosion Sound, 0.100, 20, 13, 0, 0, 0);
 				Wait(0.100, Ignore Condition);
 				Event Player.D = 100;
 			Else If(Event Player.selected_hero_list_number == 1);
