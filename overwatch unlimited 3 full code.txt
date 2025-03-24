@@ -151,8 +151,8 @@ settings
 
 			Freja
 			{
-				Damage Dealt: 130%
-				Health: 130%
+				Damage Dealt: 145%
+				Health: 145%
 				Ultimate Generation - Combat Bola Shot: 130%
 				Ultimate Generation Bola Shot: 125%
 			}
@@ -14172,7 +14172,7 @@ rule("ZENYATTA tristan Sec.Fire Attack PLACEHOLDER")
 	}
 }
 
-rule("Rule 311")
+rule("Fast melee subroutine FIX")
 {
 	event
 	{
@@ -14184,5 +14184,23 @@ rule("Rule 311")
 	{
 		Damage(Filtered Array(Players Within Radius(Event Player, 4, Opposite Team Of(Team Of(Event Player)), Off), Is In View Angle(
 			Event Player, Current Array Element, 60)), Event Player, 30);
+	}
+}
+
+rule("Rule 312")
+{
+	event
+	{
+		Player Dealt Damage;
+		All;
+		Freja;
+	}
+
+	actions
+	{
+		If(Event Ability == Button(Secondary Fire));
+			Heal(Event Player, Null, 50);
+		Else If(Event Ability == Button(Ultimate));
+			Set Status(Victim, Attacker, Frozen, 2);
 	}
 }
