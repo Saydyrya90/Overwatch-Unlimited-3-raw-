@@ -12447,8 +12447,8 @@ rule("ULTIMATE SETUP #3: Echo, Roadhog, Mei, Sigma, Bastion, Briggite, Reaper, R
 				Skip If(!Event Player.Is_Using_Ultimate, 4);
 				Wait Until(!Event Player.Is_Using_Ultimate || Is Firing Secondary(Event Player), 10);
 				Event Player.Is_Using_Ultimate = False;
-				Create Projectile(Zarya Graviton, Event Player, Null, Null, To World, Damage, All Teams, Event Player.D, 0.850, 8,
-					DVa Self Destruct Explosion Effect, Explosion Sound, 0.100, 20, 13, 0, 0, 0);
+				Create Projectile(Zarya Graviton, Event Player, Null, Null, To World, Damage, All Teams, Event Player.D, 0.850, 8, Ring Explosion,
+					Explosion Sound, 0.100, 20, 13, 0, 0, 0);
 				Wait(0.100, Ignore Condition);
 				Event Player.D = 100;
 			Else If(Event Player.selected_hero_list_number == 1);
@@ -14172,7 +14172,7 @@ rule("ZENYATTA tristan Sec.Fire Attack PLACEHOLDER")
 	}
 }
 
-rule("Fast melee subroutine FIX")
+rule("Rule 311")
 {
 	event
 	{
@@ -14184,23 +14184,5 @@ rule("Fast melee subroutine FIX")
 	{
 		Damage(Filtered Array(Players Within Radius(Event Player, 4, Opposite Team Of(Team Of(Event Player)), Off), Is In View Angle(
 			Event Player, Current Array Element, 60)), Event Player, 30);
-	}
-}
-
-rule("Rule 312")
-{
-	event
-	{
-		Player Dealt Damage;
-		All;
-		Freja;
-	}
-
-	actions
-	{
-		If(Event Ability == Button(Secondary Fire));
-			Heal(Event Player, Null, 50);
-		Else If(Event Ability == Button(Ultimate));
-			Set Status(Victim, Attacker, Frozen, 2);
 	}
 }
