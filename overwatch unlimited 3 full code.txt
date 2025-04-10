@@ -138,7 +138,7 @@ settings
 
 			Echo
 			{
-				Health: 85%
+				Health: 97%
 				Jump Vertical Speed: 155%
 				Movement Gravity: 40%
 				Movement Speed: 110%
@@ -4211,18 +4211,10 @@ rule("Xuanzang Sanzang faster melee")
 
 	actions
 	{
-		If(!Event Player.Is_Using_Ultimate);
-			Press Button(Event Player, Button(Melee));
-			Wait(0.600, Ignore Condition);
-			Cancel Primary Action(Event Player);
-			Set Ability Cooldown(Event Player, Button(Melee), False);
-			Loop If Condition Is True;
-		Else;
-			Press Button(Event Player, Button(Melee));
-			Set Ability Cooldown(Event Player, Button(Melee), False);
-			Wait(0.080, Ignore Condition);
-			Cancel Primary Action(Event Player);
-			Loop If Condition Is True;
+		Press Button(Event Player, Button(Melee));
+		Call Subroutine(fast_melee_subroutine);
+		Wait(Event Player.Is_Using_Ultimate ? 0.080 : 0.600, Ignore Condition);
+		Loop If Condition Is True;
 	}
 }
 
