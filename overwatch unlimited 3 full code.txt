@@ -728,7 +728,7 @@ subroutines
 	80: FoV_and_LoS_player_select
 	81: caesar_melee_cooldown
 	85: Enable_Buttons_sub
-	86: Tracer_trigger
+	86: Tracer_declansator
 	87: mei_spiderwoman_loop
 	88: Symmetra_AA_mine
 	90: float_player_above_level
@@ -1503,7 +1503,7 @@ rule("Reset when spawning or re entering spawn")
 		Create In-World Text(Local Player, Custom String("- - - - - - - TUTORIAL - - - - - - -\n{0}", Custom String(
 			"Objective: Kill the enemies\r\n(back) {1} : {2} (forward)\r\n{0}", Custom String(
 			"\r\nPress ({1}) to select the class\r\nCrouch 2s in Spawn for Random Class\r\n{0}", Custom String(
-			"Game has 115! Custom Hero SubClasses\r\n{0}", Custom String("All abilities are explained at https://workshop.codes/RTMJ2\r")),
+			"Game has 116! Custom Hero SubClasses\r\n{0}", Custom String("All abilities are explained at https://workshop.codes/RTMJ2\r")),
 			Input Binding String(Button(Interact))), Input Binding String(Button(Primary Fire)), Input Binding String(Button(
 			Secondary Fire)))), Facing Direction Of(Event Player) + Eye Position(Event Player), True, Clip Against Surfaces,
 			Visible To Position and String, Color(White), Default Visibility);
@@ -1894,6 +1894,10 @@ rule("Array list for All servants")
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Alphonse Elric")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
 				"While Ulting: Rockets freeze for 3s &\npunches teleport enemies"));
+		Else If(Hero Of(Event Player) == Hero(Freja));
+			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Hamlet")));
+			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
+				"PASSIVE: Invisible while crouching\nULT:Projectile is TORNADO"));
 		End;
 	}
 }
@@ -9622,7 +9626,7 @@ rule("Tracer King Crimson ab2 early detonate bombs")
 		Set Status(Event Player.B, Event Player, Rooted, 0.900);
 		Damage(Event Player.B, Event Player, 105);
 		Skip If(Event Player.Is_Using_Ultimate, 1);
-		Call Subroutine(Tracer_trigger);
+		Call Subroutine(Tracer_declansator);
 	}
 }
 
@@ -9631,7 +9635,7 @@ rule("Tracer subroutine trigger detonate")
 	event
 	{
 		Subroutine;
-		Tracer_trigger;
+		Tracer_declansator;
 	}
 
 	actions
@@ -10421,7 +10425,7 @@ rule("Tracer trigger clean")
 	actions
 	{
 		Wait Until(Is In Spawn Room(Event Player), 99999);
-		Call Subroutine(Tracer_trigger);
+		Call Subroutine(Tracer_declansator);
 	}
 }
 
@@ -11210,7 +11214,7 @@ rule("ULTIMATE SETUP #1: Sojourn, Ana, Lucio, Illari, Hanzo, Pharah, Baptiste, K
 				Small Message(All Players(All Teams), Custom String("{0} CAN'T DODGE THIS", Hero Icon String(Hero Of(Event Player))));
 				Wait(2.500, Ignore Condition);
 				Damage(Event Player.B, Event Player, 550);
-				Call Subroutine(Tracer_trigger);
+				Call Subroutine(Tracer_declansator);
 				Event Player.Is_Using_Ultimate = False;
 			End;
 		Else If(Hero Of(Event Player) == Hero(D.Va) && !Is In Alternate Form(Event Player) && !Event Player.A && !Event Player.S);
@@ -14164,7 +14168,7 @@ rule("ZENYATTA tristan Sec.Fire Attack PLACEHOLDER")
 	}
 }
 
-rule("Rule 311")
+rule("Fast melee subroutine for everyone")
 {
 	event
 	{
@@ -14176,5 +14180,57 @@ rule("Rule 311")
 	{
 		Damage(Filtered Array(Players Within Radius(Event Player, 4, Opposite Team Of(Team Of(Event Player)), Off), Is In View Angle(
 			Event Player, Current Array Element, 60)), Event Player, 30);
+	}
+}
+
+rule("Freja sec. fire bleeding effect enemy")
+{
+	event
+	{
+		Player Dealt Damage;
+		All;
+		Freja;
+	}
+
+	actions
+	{
+		If(Event Ability == Button(Secondary Fire));
+			"bleeding and cursed status"
+			Start Damage Over Time(Victim, Attacker, 10, 1);
+		Else If(Event Ability == Button(Ultimate));
+			Apply Impulse(Victim, Vector(Cosine From Degrees(Total Time Elapsed * 360), 0, Sine From Degrees(Total Time Elapsed * 360)), 19,
+				To World, Incorporate Contrary Motion);
+			Set Status(Victim, Null, Knocked Down, 3);
+	}
+}
+
+rule("Freja hunter hardest defense ability")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		Freja;
+	}
+
+	conditions
+	{
+		Is Crouching(Event Player) == True;
+	}
+
+	actions
+	{
+		Call Subroutine(destroy_nameONplayer);
+		Set Invisible(Event Player, All);
+		Set Damage Received(Event Player, 20);
+		While(Is Crouching(Event Player) && !Is In Spawn Room(Event Player));
+			Event Player.Is_Crippled = True;
+			Wait Until(!Is Crouching(Event Player), 5);
+			Wait(0.017, Ignore Condition);
+		End;
+		Set Damage Received(Event Player, 70);
+		Event Player.Is_Crippled = False;
+		Set Invisible(Event Player, None);
+		Call Subroutine(create_nameONplayer);
 	}
 }
