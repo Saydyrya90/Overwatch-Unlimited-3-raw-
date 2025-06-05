@@ -209,7 +209,7 @@ settings
 
 			Junker Queen
 			{
-				Damage Dealt: 130%
+				Damage Dealt: 123%
 				Damage Received: 105%
 				Healing Dealt: 120%
 				Healing Received: 30%
@@ -241,12 +241,13 @@ settings
 
 			Juno
 			{
-				Damage Dealt: 155%
+				Damage Dealt: 145%
 				Healing Dealt: 110%
 				Healing Received: 65%
 				Health: 140%
 				Movement Gravity: 105%
 				Movement Speed: 105%
+				Pulsar Torpedoes Cooldown Time: 125%
 				Ultimate Generation - Combat Orbital Ray: 140%
 				Ultimate Generation - Passive Orbital Ray: 125%
 				Ultimate Generation Orbital Ray: 150%
@@ -327,8 +328,7 @@ settings
 			{
 				Healing Received: 75%
 				Health: 85%
-				Projectile Speed: 215%
-				Weapons Enabled: Caduceus Blaster Only
+				Projectile Speed: 115%
 			}
 
 			Moira
@@ -943,10 +943,7 @@ rule("ALL DAMAGE DEALT complete set")
 			End;
 		Else If(Hero Of(Event Player) == Hero(Juno));
 			If(Is Using Ultimate(Event Player));
-				If(Event Ability == Button(Secondary Fire));
-					Set Status(Victim, Event Player, Frozen, 2.500);
-					Damage(Victim, Null, 100);
-				Else If(Event Ability == Button(Melee));
+				If(Event Ability == Button(Melee));
 					Teleport(Victim, Position Of(Victim) + Vector(Random Real(-15, 15), Random Real(-1, 5), Random Real(-15, 15)));
 					Damage(Victim, Null, 60);
 				End;
@@ -1563,7 +1560,7 @@ rule("Array list for All servants")
 		Else If(Hero Of(Event Player) == Hero(Mercy));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Jeanne D'Arc")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"Ab1: Stick to ally back\r\nAb2: Teleport\r\nULT: Start absorbing all Damage\r\nPress (ULT) again to release IT around you"));
+				"Ab1: Fly forward\r\nAb2: Stick to ally back\r\nULT: Start absorbing all Damage\r\nPress (ULT) again to release IT around you"));
 		Else If(Hero Of(Event Player) == Hero(Pharah));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Ishtar"), Custom String("David")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
@@ -1893,11 +1890,15 @@ rule("Array list for All servants")
 		Else If(Hero Of(Event Player) == Hero(Juno));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Alphonse Elric")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"While Ulting: Rockets freeze for 3s &\npunches teleport enemies"));
+				"Rockets: Slow enemies\n\r\n			ULT: Kicking enemies random teleports them"));
 		Else If(Hero Of(Event Player) == Hero(Freja));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Hamlet")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"PASSIVE: Invisible while crouching\nULT:Projectile is TORNADO"));
+				"PASSIVE: Invisible while crouching\n>>Cooldown shared with Ab2\nULT:Projectile is TORNADO"));
+		Else If(Hero Of(Event Player) == Hero(Freja));
+			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Buzzkil")));
+			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
+				"Ab2: Touching it knocks-down enemies\nSec.Fire:Pushes back enemies"));
 		End;
 	}
 }
@@ -1921,7 +1922,7 @@ rule("Become All Heroes 1")
 	actions
 	{
 		Wait Until(Evaluate Once(Hero Of(Event Player)) != Hero Of(Event Player) || !Is In Spawn Room(Event Player), 99999);
-		Skip If(Is In Spawn Room(Event Player), 426);
+		Skip If(Is In Spawn Room(Event Player), 427);
 		If(Hero Of(Event Player) == Hero(Hanzo));
 			If(Event Player.selected_hero_list_number == Null);
 				Event Player.playerSpeed[False] += 10;
@@ -2214,6 +2215,7 @@ rule("Become All Heroes 1")
 				Disallow Button(Event Player, Button(Ultimate));
 				Event Player.playerSpeed[False] += 30;
 				Modify Global Variable(S, Append To Array, Event Player);
+				Modify Global Variable(L, Append To Array, Event Player);
 			Else If(Event Player.selected_hero_list_number == 3);
 				Set Max Health(Event Player, 233);
 				Set Damage Dealt(Event Player, 110);
@@ -2378,7 +2380,7 @@ rule("Become All Heroes 2")
 	actions
 	{
 		Wait Until(Evaluate Once(Hero Of(Event Player)) != Hero Of(Event Player) || !Is In Spawn Room(Event Player), 99999);
-		Skip If(Is In Spawn Room(Event Player), 374);
+		Skip If(Is In Spawn Room(Event Player), 371);
 		If(Hero Of(Event Player) == Hero(Mei));
 			Disallow Button(Event Player, Button(Ultimate));
 			If(Event Player.selected_hero_list_number == Null);
@@ -2681,9 +2683,6 @@ rule("Become All Heroes 2")
 			Set Max Health(Event Player, 205);
 			Set Damage Dealt(Event Player, 155);
 			Disallow Button(Event Player, Button(Ultimate));
-			Disallow Button(Event Player, Button(Ability 1));
-			Disallow Button(Event Player, Button(Primary Fire));
-			Disallow Button(Event Player, Button(Secondary Fire));
 		Else If(Hero Of(Event Player) == Hero(Moira));
 			If(Event Player.selected_hero_list_number == Null);
 				Event Player.playerSpeed[False] += 20;
@@ -3061,7 +3060,7 @@ rule("Set the players that get ultimate faster and disable inspector")
 		Global.Global_ULTButton_2 = Array(Hero(Cassidy), Hero(Symmetra), Hero(Soldier: 76), Hero(Genji), Hero(Moira), Hero(Doomfist));
 		"All players that have is using ultimate"
 		Global.Global_ULTButton_3 = Array(Hero(Echo), Hero(Mercy), Hero(Roadhog), Hero(Mei), Hero(Sigma), Hero(Bastion), Hero(Brigitte),
-			Hero(Reaper), Hero(Reinhardt), Hero(Ramattra), Hero(Mauga), Hero(Winston), Hero(Widowmaker));
+			Hero(Reaper), Hero(Reinhardt), Hero(Ramattra), Hero(Mauga), Hero(Winston), Hero(Juno), Hero(Widowmaker));
 		Global.Winston_Slow_Areas = Empty Array;
 	}
 }
@@ -3775,6 +3774,48 @@ rule("Jean D'Arc ultimate 2/2")
 	}
 }
 
+rule("Jean D'Arc ab 2 get on player back")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		Mercy;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Ability 2)) == True;
+		Ability Cooldown(Event Player, Button(Ability 2)) == 0;
+		Is In Spawn Room(Event Player) == False;
+	}
+
+	actions
+	{
+		Call Subroutine(FoV_and_LoS_player_select);
+		Skip If(!Event Player.FoV_and_lineOFsight_player || Team Of(Event Player.FoV_and_lineOFsight_player) != Team Of(Event Player), 15);
+		Event Player.B = True;
+		Event Player.FoV_and_lineOFsight_player.mercy_attached_master = Event Player;
+		Attach Players(Event Player, Event Player.FoV_and_lineOFsight_player, Vector(0, 2, 0));
+		Set Damage Received(Event Player, 50);
+		Set Damage Received(Event Player.FoV_and_lineOFsight_player, 50);
+		Set Damage Dealt(Event Player, 145);
+		Set Projectile Speed(Event Player, 500);
+		Wait(0.250, Ignore Condition);
+		Wait Until(Distance Between(Event Player, Event Player.FoV_and_lineOFsight_player) > 3 || Is Dead(
+			Event Player.FoV_and_lineOFsight_player) || Is Button Held(Event Player, Button(Ability 2)) || !Entity Exists(
+			Event Player.FoV_and_lineOFsight_player) || Is In Spawn Room(Event Player), 99999);
+		Set Damage Received(Event Player, 70);
+		Set Damage Received(Event Player.FoV_and_lineOFsight_player, 70);
+		Event Player.FoV_and_lineOFsight_player.mercy_attached_master = Null;
+		Detach Players(Event Player);
+		Set Damage Dealt(Event Player, 155);
+		Event Player.B = False;
+		Set Ability Cooldown(Event Player, Button(Ability 2), 12);
+		Set Projectile Speed(Event Player, 100);
+	}
+}
+
 rule("Jean D'Arc ab 1")
 {
 	event
@@ -3788,60 +3829,14 @@ rule("Jean D'Arc ab 1")
 	{
 		Is Button Held(Event Player, Button(Ability 1)) == True;
 		Ability Cooldown(Event Player, Button(Ability 1)) == 0;
-		Is In Spawn Room(Event Player) == False;
-	}
-
-	actions
-	{
-		Call Subroutine(FoV_and_LoS_player_select);
-		Skip If(!Event Player.FoV_and_lineOFsight_player || Team Of(Event Player.FoV_and_lineOFsight_player) != Team Of(Event Player), 15);
-		Event Player.B = True;
-		Event Player.FoV_and_lineOFsight_player.mercy_attached_master = Event Player;
-		Attach Players(Event Player, Event Player.FoV_and_lineOFsight_player, Vector(0, 2, 0));
-		Allow Button(Event Player, Button(Primary Fire));
-		Set Damage Received(Event Player, 50);
-		Set Damage Received(Event Player.FoV_and_lineOFsight_player, 50);
-		Set Damage Dealt(Event Player, 145);
-		Wait(0.250, Ignore Condition);
-		Wait Until(Distance Between(Event Player, Event Player.FoV_and_lineOFsight_player) > 3 || Is Dead(
-			Event Player.FoV_and_lineOFsight_player) || Is Button Held(Event Player, Button(Ability 1)) || !Entity Exists(
-			Event Player.FoV_and_lineOFsight_player) || Is In Spawn Room(Event Player), 99999);
-		Set Damage Received(Event Player, 70);
-		Set Damage Received(Event Player.FoV_and_lineOFsight_player, 70);
-		Event Player.FoV_and_lineOFsight_player.mercy_attached_master = Null;
-		Detach Players(Event Player);
-		Set Damage Dealt(Event Player, 155);
-		Event Player.B = False;
-		Disallow Button(Event Player, Button(Primary Fire));
-		Set Ability Cooldown(Event Player, Button(Ability 1), 12);
-	}
-}
-
-rule("Jean D'Arc ab 2")
-{
-	event
-	{
-		Ongoing - Each Player;
-		All;
-		Mercy;
-	}
-
-	conditions
-	{
-		Is Button Held(Event Player, Button(Ability 2)) == True;
-		Ability Cooldown(Event Player, Button(Ability 2)) == 0;
 		Event Player.B == False;
 	}
 
 	actions
 	{
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(Red), Event Player, 90);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Event Player + Vector(False, 1.500, False), 2);
-		Call Subroutine(raycast_hit_position1);
-		Set Status(Event Player, Null, Rooted, True);
-		Teleport(Event Player, Event Player.raycast_hit_position);
-		Set Ability Cooldown(Event Player, Button(Ability 2), 10);
-		Wait(10, Ignore Condition);
+		Apply Impulse(Event Player, Facing Direction Of(Event Player), 35, To World, Cancel Contrary Motion);
+		Set Ability Cooldown(Event Player, Button(Ability 1), 6);
+		Wait(1.500, Ignore Condition);
 	}
 }
 
@@ -3863,34 +3858,8 @@ rule("Jean D'Arc melee steal ult")
 
 	actions
 	{
-		Set Ultimate Charge(Victim, Ultimate Charge Percent(Victim) - 3);
-		Set Ultimate Charge(Event Player, Ultimate Charge Percent(Event Player) + 3);
-	}
-}
-
-rule("Jean D'Arc fast melee")
-{
-	event
-	{
-		Ongoing - Each Player;
-		All;
-		Mercy;
-	}
-
-	conditions
-	{
-		Is Button Held(Event Player, Button(Primary Fire)) == True;
-		Event Player.selected_hero_list_number == Null;
-		Event Player.B == False;
-	}
-
-	actions
-	{
-		Set Ability Cooldown(Event Player, Button(Melee), False);
-		Press Button(Event Player, Button(Melee));
-		Wait(0.520, Ignore Condition);
-		Cancel Primary Action(Event Player);
-		Loop If Condition Is True;
+		Set Ultimate Charge(Victim, Ultimate Charge Percent(Victim) - 10);
+		Set Ultimate Charge(Event Player, Ultimate Charge Percent(Event Player) + 10);
 	}
 }
 
@@ -9706,7 +9675,7 @@ rule("William Tell subroutine")
 	}
 }
 
-rule("King Crimson Sec.Fire")
+rule("D.va King Crimson Sec.Fire")
 {
 	event
 	{
@@ -9718,7 +9687,6 @@ rule("King Crimson Sec.Fire")
 	conditions
 	{
 		Is Firing Secondary(Event Player) == True;
-		Ability Resource(Event Player, Button(Secondary Fire)) >= 99;
 		Event Player.A == False;
 		Event Player.Is_Using_Ultimate == False;
 		Event Player.selecting_HUD == False;
@@ -9744,7 +9712,7 @@ rule("King Crimson Sec.Fire")
 	}
 }
 
-rule("King Crimson Ab1 become invisible")
+rule("D.va King Crimson Ab1 become invisible")
 {
 	event
 	{
@@ -12236,7 +12204,7 @@ rule("ULTIMATE SETUP #2: Cassidy, Symmetra, Soldier 76, Genji, Moira, Doomfist")
 	}
 }
 
-rule("ULTIMATE SETUP #3: Echo, Roadhog, Mei, Sigma, Bastion, Briggite, Reaper, Rein, Mauga, Rammatra, Winston, Widowmaker")
+rule("ULTIMATE SETUP #3: Echo, Roadhog, Mei, Sigma, Bastion, Mercy, Briggite, Reaper, Rein, Mauga, Rammatra, Winston, Widowmaker, Juno")
 {
 	event
 	{
@@ -12310,10 +12278,12 @@ rule("ULTIMATE SETUP #3: Echo, Roadhog, Mei, Sigma, Bastion, Briggite, Reaper, R
 			Set Status(Event Player, Null, Unkillable, 15);
 			Event Player.Is_Using_Ultimate = True;
 			Event Player.D = 1;
+			Disallow Button(Event Player, Button(Primary Fire));
 			Disallow Button(Event Player, Button(Melee));
 			Wait(1.500, Ignore Condition);
 			Wait Until(!Event Player.Is_Using_Ultimate || Is Button Held(Event Player, Button(Ultimate)), 15);
 			Allow Button(Event Player, Button(Melee));
+			Allow Button(Event Player, Button(Primary Fire));
 			Event Player.Is_Using_Ultimate = False;
 			Heal(Players Within Radius(Event Player, 12, Team Of(Event Player), Off), Event Player, Event Player.D * 1.650);
 			Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Event Player + Vector(False, 2, False), 12);
@@ -12702,6 +12672,11 @@ rule("ULTIMATE SETUP #3: Echo, Roadhog, Mei, Sigma, Bastion, Briggite, Reaper, R
 				Wait(3, Ignore Condition);
 				Event Player.Is_Using_Ultimate = False;
 			End;
+		Else If(Hero Of(Event Player) == Hero(Juno));
+			Event Player.playerSpeed[False] += 90;
+			Wait(0.150, Ignore Condition);
+			Wait Until(Ultimate Charge Percent(Event Player) > 0, 99999);
+			Event Player.playerSpeed[False] -= 90;
 		Else If(Hero Of(Event Player) == Hero(Ramattra));
 			If(Event Player.selected_hero_list_number == 1);
 				Call Subroutine(create_dummy_of_EventPlayer);
@@ -14216,6 +14191,7 @@ rule("Freja hunter hardest defense ability")
 	conditions
 	{
 		Is Crouching(Event Player) == True;
+		Ability Cooldown(Event Player, Button(Ability 2)) == False;
 	}
 
 	actions
@@ -14232,5 +14208,52 @@ rule("Freja hunter hardest defense ability")
 		Event Player.Is_Crippled = False;
 		Set Invisible(Event Player, None);
 		Call Subroutine(create_nameONplayer);
+		Set Ability Cooldown(Event Player, Button(Ability 2), 11);
+	}
+}
+
+rule("Juno take damage with rockets")
+{
+	event
+	{
+		Player Took Damage;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Hero Of(Attacker) == Hero(Juno);
+		Event Ability == Button(Secondary Fire);
+	}
+
+	actions
+	{
+		Event Player.playerSpeed[False] -= 40;
+		Wait(2.500, Ignore Condition);
+		Event Player.playerSpeed[False] += 40;
+	}
+}
+
+rule("hazard take damage with right click")
+{
+	event
+	{
+		Player Took Damage;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Hero Of(Attacker) == Hero(Hazard);
+	}
+
+	actions
+	{
+		If(Event Ability == Button(Secondary Fire));
+			Apply Impulse(Event Player, Event Direction, 25, To World, Incorporate Contrary Motion);
+		Else If(Event Ability == Button(Ability 2));
+			Set Status(Event Player, Null, Knocked Down, 1.500);
 	}
 }
