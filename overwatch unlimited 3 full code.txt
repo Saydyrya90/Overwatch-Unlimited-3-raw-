@@ -271,7 +271,7 @@ settings
 			Lifeweaver
 			{
 				Ammunition Clip Size Scalar: 125%
-				Damage Dealt: 120%
+				Damage Dealt: 113%
 				Healing Dealt: 30%
 				Healing Received: 75%
 				Health: 145%
@@ -944,8 +944,9 @@ rule("ALL DAMAGE DEALT complete set")
 		Else If(Hero Of(Event Player) == Hero(Juno));
 			If(Is Using Ultimate(Event Player));
 				If(Event Ability == Button(Melee));
-					Teleport(Victim, Position Of(Victim) + Vector(Random Real(-15, 15), Random Real(-1, 5), Random Real(-15, 15)));
-					Damage(Victim, Null, 60);
+					Damage(Victim, Null, 40);
+					Set Status(Victim, Event Player, Burning, 3);
+					Start Damage Over Time(Victim, Event Player, 3, 20);
 				End;
 			End;
 		Else If(Hero Of(Event Player) == Hero(Ana));
@@ -1580,7 +1581,7 @@ rule("Array list for All servants")
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Teodor Kazynsky"), Custom String(
 				"Split-Stream")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"Ab1: Damage and stun marked enemies\r\nPunch: To mark enemy\r\nULT: EXPLODE all marked enemies"));
+				"Ab2: Damage and stun marked enemies\r\nPunch: To mark enemy\r\nULT: EXPLODE all marked enemies"));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
 				"Passive1: Emergency Recall&Heal\nKills give ULT+Heal allies\nULT: Enemies (in range) looking away are paralysed"));
 		Else If(Hero Of(Event Player) == Hero(D.Va));
@@ -1867,9 +1868,9 @@ rule("Array list for All servants")
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Merlin"), Custom String(
 				"Queen Elizabeth II")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"Ab1:Invisible & Faster\nAb2: Lock/Revert All players HP\nULT: Clear debuffs & buff allies"));
+				"Ab1:Invisible\nAb2: Lock/Revert All players HP\nULT: Clear debuffs & buff allies"));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"Pr.Fire: Healthpacks damage enemy hit\nAb2: Invert FoV&LoS enemy controls\nULT: Invert All Enemies HP & Movement"));
+				"Pr.Fire: Healthpacks damage enemy\nAb2: Invert FoV&LoS enemy controls\nULT: All healing damage enemies & invert Movement"));
 		Else If(Hero Of(Event Player) == Hero(Illari));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Cuauhtémoc"), Custom String(
 				"Leonardo da Vinci")));
@@ -1890,12 +1891,12 @@ rule("Array list for All servants")
 		Else If(Hero Of(Event Player) == Hero(Juno));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Alphonse Elric")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"Rockets: Slow enemies\n\r\n			ULT: Kicking enemies random teleports them"));
+				"Rockets: Slow enemies\n\r\n			ULT: Kick enemies to burn them"));
 		Else If(Hero Of(Event Player) == Hero(Freja));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Hamlet")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
 				"PASSIVE: Invisible while crouching\n>>Cooldown shared with Ab2\nULT:Projectile is TORNADO"));
-		Else If(Hero Of(Event Player) == Hero(Freja));
+		Else If(Hero Of(Event Player) == Hero(Hazard));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Buzzkil")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
 				"Ab2: Touching it knocks-down enemies\nSec.Fire:Pushes back enemies"));
@@ -3621,10 +3622,11 @@ rule("All Ashe ab 2 Nobunaga, Caster Gill, Xuanzang, William Tell")
 			Event Player.J = False;
 			Set Ability Cooldown(Event Player, Button(Ability 2), 8);
 		Else If(Event Player.selected_hero_list_number == 2);
-			For Player Variable(Event Player, for_loop, 0, 3, True);
+			For Player Variable(Event Player, for_loop, 0, 4, True);
 				Call Subroutine(FoV_and_LoS_player_select);
 				Create Projectile(Bastion A-36 Tactical Grenade, Event Player, Null, Null, To World, Damage, Opposite Team Of(Team Of(
-					Event Player)), 90, 0.500, 3, Echo Sticky Bomb Explosion Effect, Junkrat Frag Launcher Explosion Sound, 0.002, 75, 5, 3, 1, 0);
+					Event Player)), 70, 0.500, 3, Echo Sticky Bomb Explosion Effect, Junkrat Frag Launcher Explosion Sound, 0.003, 20, 13, 3, 0,
+					0);
 				Skip If(Is Dead(Event Player) || Is In Spawn Room(Event Player), 2);
 				Wait(0.650, Ignore Condition);
 			End;
@@ -5163,7 +5165,7 @@ rule("Hassan 100 ult 2/3 (subroutine)")
 
 	actions
 	{
-		Skip If(!Is In Line of Sight(Event Player, Event Player.FoV_and_lineOFsight_player, Barriers Do Not Block LOS), 12);
+		Skip If(!Is In Line of Sight(Event Player, Event Player.FoV_and_lineOFsight_player, Barriers Do Not Block LOS), 10);
 		Set Status(Event Player.FoV_and_lineOFsight_player, Event Player, Rooted, 3.600);
 		For Player Variable(Event Player, for_loop, 0, 4, True);
 			Create Dummy Bot(Hero(Genji), Team Of(Event Player), -1, Event Player.FoV_and_lineOFsight_player + Vector(False, 3, False), Down);
@@ -5175,8 +5177,6 @@ rule("Hassan 100 ult 2/3 (subroutine)")
 			Wait(0.600, Ignore Condition);
 			Destroy Dummy Bot(Team Of(Event Player), Slot Of(Last Created Entity));
 		End;
-		Wait Until(!Event Player.Is_Using_Ultimate, 999);
-		Abort;
 	}
 }
 
@@ -10280,7 +10280,7 @@ rule("Merlin and Queen Elisabeth LifeWeaver ab2 Lock Hp")
 			Event Player.FoV_and_lineOFsight_player.healthpack_cursed[4] = True;
 			Wait Until(Is In Spawn Room(Event Player), 4);
 			Stop Transforming Throttle(Event Player.FoV_and_lineOFsight_player);
-			Set Ability Cooldown(Event Player, Button(Ability 2), 10);
+			Set Ability Cooldown(Event Player, Button(Ability 2), 15);
 			Event Player.FoV_and_lineOFsight_player.healthpack_cursed[4] = False;
 		Else;
 			Event Player.M = Filtered Array(All Living Players(All Teams), Array Contains(All Heroes, Hero Of(Current Array Element)));
@@ -10836,7 +10836,7 @@ rule("ULTIMATE SETUP #1: Sojourn, Ana, Lucio, Illari, Hanzo, Pharah, Baptiste, K
 								Event Player.T[Event Player.X] == Last Of(Event Player.T) ? -1 : 1)], Color(Yellow), Visible To Position and Radius);
 							Event Player.Effects[4] = Last Created Entity;
 							Damage(Event Player.T[Event Player.X], Event Player, 125);
-							Wait(0.400, Ignore Condition);
+							Wait(0.300, Ignore Condition);
 							Destroy Effect(Event Player.Effects[4]);
 						End;
 						Event Player.FoV_and_lineOFsight_player = Last Of(Event Player.T);
@@ -11777,7 +11777,7 @@ rule("ULTIMATE SETUP #2: Cassidy, Symmetra, Soldier 76, Genji, Moira, Doomfist")
 						Visible To Position and Radius);
 					Event Player.Effects[True] = Last Created Entity;
 					Event Player.Is_Using_Ultimate = True;
-					Start Rule(hassan_100_loop, Restart Rule);
+					Start Rule(hassan_100_loop, Do Nothing);
 					Wait Until(!Event Player.Is_Using_Ultimate, 4.200);
 					Event Player.Is_Using_Ultimate = False;
 					Destroy Effect(Event Player.Effects[True]);
@@ -12761,7 +12761,7 @@ rule("Orisa Marcus freeze at 1hp")
 	}
 }
 
-rule("Push Orisa Marcus if damaged at 1hp")
+rule("Push Orisa Marcus or Doomfist tamamo' if damaged at 1hp")
 {
 	event
 	{
@@ -12778,8 +12778,7 @@ rule("Push Orisa Marcus if damaged at 1hp")
 
 	actions
 	{
-		Apply Impulse(Event Player, Direction Towards(Attacker - Vector(0, 2, 0), Event Player),
-			Event Player.selected_hero_list_number ? 70 : 20, To World, Cancel Contrary Motion);
+		Apply Impulse(Event Player, Direction Towards(Attacker - Vector(0, 1.250, 0), Event Player), 20, To World, Cancel Contrary Motion);
 	}
 }
 
@@ -14192,6 +14191,7 @@ rule("Freja hunter hardest defense ability")
 	{
 		Is Crouching(Event Player) == True;
 		Ability Cooldown(Event Player, Button(Ability 2)) == False;
+		Is In Spawn Room(Event Player) == False;
 	}
 
 	actions
