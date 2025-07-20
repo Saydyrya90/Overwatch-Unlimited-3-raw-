@@ -293,7 +293,7 @@ settings
 				Healing Received: 80%
 				Health: 60%
 				Movement Speed: 90%
-				Projectile Speed: 115%
+				Projectile Speed: 50%
 				Ultimate Generation - Combat Sound Barrier: 215%
 				Ultimate Generation Sound Barrier: 110%
 			}
@@ -2688,8 +2688,8 @@ rule("Become All Heroes 2")
 			If(Event Player.selected_hero_list_number == Null);
 				Event Player.playerSpeed[False] += 20;
 				Set Max Health(Event Player, 175);
-				Set Projectile Speed(Event Player, 60);
-				Set Damage Dealt(Event Player, 60);
+				Set Projectile Speed(Event Player, 50);
+				Set Damage Dealt(Event Player, 50);
 				Disallow Button(Event Player, Button(Ability 1));
 				Disallow Button(Event Player, Button(Ability 2));
 				Disallow Button(Event Player, Button(Primary Fire));
@@ -3312,7 +3312,7 @@ rule("defense shield ability 1/3 (setup)")
 		Event Player.X = True;
 		Allow Button(Event Player, Button(Ability 2));
 		Skip If(Event Player.H <= 0, 1);
-		Set Ability Cooldown(Event Player, Button(Ability 1), 14);
+		Set Ability Cooldown(Event Player, Button(Ability 1), 17);
 		Skip If(Event Player.H > 0, 2);
 		Call Subroutine(emyia_clear_shield);
 		Event Player.X = True;
@@ -4278,7 +4278,7 @@ rule("Gilles ab2 create effects (L) || Sherlock Holmes LifeSteal || Gordon AA ab
 			Skip If(!Entity Exists(Event Player.FoV_and_lineOFsight_player), 7);
 			Start Damage Over Time(Event Player.FoV_and_lineOFsight_player, Null, 3, 60);
 			Start Heal Over Time(Event Player, Event Player, 3, 40);
-			Set Aim Speed(Event Player.FoV_and_lineOFsight_player, 1000);
+			Set Aim Speed(Event Player.FoV_and_lineOFsight_player, 10);
 			Create Effect(All Players(All Teams), Cassidy Flashbang Stunned Effect, Color(White), Eye Position(
 				Event Player.FoV_and_lineOFsight_player), 2, Visible To Position and Radius);
 			Event Player.Effects[1] = Last Created Entity;
@@ -7028,12 +7028,12 @@ rule("All Hanzo Ab1")
 						Event Player.P[1 + Event Player.for_loop], Color(Yellow), None);
 					Event Player.Effects[Event Player.for_loop + 5] = Last Created Entity;
 					Play Effect(All Players(All Teams), Buff Impact Sound, Color(Yellow), Event Player, 100);
-					Wait(0.150, Ignore Condition);
+					Wait(0.100, Ignore Condition);
 				End;
 				Play Effect(All Players(All Teams), Bad Explosion, Color(Yellow), Event Player.O, 1);
 				Damage(Event Player.O, Event Player, 80);
 				Event Player.O = Empty Array;
-				Wait(0.450, Ignore Condition);
+				Wait(0.350, Ignore Condition);
 				Destroy Effect(Event Player.Effects[5]);
 				Destroy Effect(Event Player.Effects[6]);
 				Destroy Effect(Event Player.Effects[7]);
@@ -7043,7 +7043,7 @@ rule("All Hanzo Ab1")
 				Event Player.O = Empty Array;
 				Small Message(Event Player, Custom String("Target is behind a wall"));
 			End;
-			Set Ability Cooldown(Event Player, Button(Ability 1), 7);
+			Set Ability Cooldown(Event Player, Button(Ability 1), 8);
 		Else If(Event Player.selected_hero_list_number == 3);
 			Destroy Icon(Event Player.Effects[2]);
 			Call Subroutine(FoV_and_LoS_player_select);
@@ -7053,16 +7053,12 @@ rule("All Hanzo Ab1")
 			Small Message(Event Player.FoV_and_lineOFsight_player, Custom String("You are being tracked by Atalante"));
 			Start Forcing Player Outlines(Event Player.FoV_and_lineOFsight_player, All Players(Team Of(Event Player)), True, Color(Lime Green),
 				Always);
-			Wait Until(!Event Player.FoV_and_lineOFsight_player, 0.600);
-			Wait Until(!Event Player.FoV_and_lineOFsight_player || Is Dead(Event Player.FoV_and_lineOFsight_player) || Is Dead(Event Player)
-				|| Is Button Held(Event Player, Button(Ability 1)) || Is In Spawn Room(Event Player) || !Is In Line of Sight(Event Player,
-				Event Player.FoV_and_lineOFsight_player, Barriers Do Not Block LOS), 9999);
+			Wait Until(Is Dead(Event Player) || Is Dead(Event Player.FoV_and_lineOFsight_player) || Is In Spawn Room(Event Player)
+				|| !Event Player.FoV_and_lineOFsight_player, 10);
 			Stop Forcing Player Outlines(Event Player.FoV_and_lineOFsight_player, All Players(All Teams));
 			Destroy Icon(Event Player.Effects[2]);
-			Event Player.Effects[2] = 5;
-			Wait(0.016, Ignore Condition);
+			Set Ability Cooldown(Event Player, Button(Ability 1), 8);
 			Event Player.FoV_and_lineOFsight_player = Null;
-			Set Ability Cooldown(Event Player, Button(Ability 1), 5);
 		Else If(Event Player.selected_hero_list_number == 4);
 			Set Ability Cooldown(Event Player, Button(Ability 1), 5);
 			Play Effect(All Players(All Teams), Ring Explosion, Color(White), Event Player + Vector(False, 1.500, False), 7);
@@ -7117,20 +7113,20 @@ rule("All Hanzo Ab2")
 	{
 		If(Event Player.selected_hero_list_number == 3 && Ability Cooldown(Event Player, Button(Ability 2)) == 0);
 			If(Entity Exists(Event Player.FoV_and_lineOFsight_player));
-				If(Altitude Of(Event Player.FoV_and_lineOFsight_player) < 3);
-					Small Message(Event Player.FoV_and_lineOFsight_player, Custom String("{0} Stunned you!!!", Hero Icon String(Hero(Hanzo))));
-					Apply Impulse(Event Player.FoV_and_lineOFsight_player, Velocity Of(Event Player.FoV_and_lineOFsight_player), Speed Of(
-						Event Player.FoV_and_lineOFsight_player) * -0.500, To World, Cancel Contrary Motion);
-					Event Player.FoV_and_lineOFsight_player.playerSpeed[False] -= 40;
-					Set Status(Event Player.FoV_and_lineOFsight_player, Event Player, Hacked, 4);
+				Event Player.X = Event Player.FoV_and_lineOFsight_player;
+				If(Altitude Of(Event Player.X) < 3);
+					Small Message(Event Player.X, Custom String("{0} Stunned you!!!", Hero Icon String(Hero(Hanzo))));
+					Apply Impulse(Event Player.X, Velocity Of(Event Player.X), Speed Of(Event Player.X) * -0.500, To World, Cancel Contrary Motion);
+					Event Player.X.playerSpeed[False] -= 40;
+					Set Status(Event Player.X, Event Player, Hacked, 4);
 					Wait Until(Event Player.Effects[2] == 5, 4);
-					Event Player.FoV_and_lineOFsight_player.playerSpeed[False] += 40;
+					Event Player.X.playerSpeed[False] += 40;
 				Else;
-					Set Status(Event Player.FoV_and_lineOFsight_player, Event Player, Rooted, 2.500);
-					Apply Impulse(Event Player.FoV_and_lineOFsight_player, Down, 10000, To World, Cancel Contrary Motion);
+					Set Status(Event Player.X, Event Player, Rooted, 2.500);
+					Apply Impulse(Event Player.X, Down, 10000, To World, Cancel Contrary Motion);
 				End;
+				Set Ability Cooldown(Event Player, Button(Ability 2), 12);
 			End;
-			Set Ability Cooldown(Event Player, Button(Ability 2), 11);
 		Else If(Ability Cooldown(Event Player, Button(Ability 2)) == Null && Event Player.selected_hero_list_number == 4);
 			Set Ability Cooldown(Event Player, Button(Ability 2), 3);
 			Call Subroutine(raycast_hit_position2);
@@ -9639,12 +9635,12 @@ rule("William Tell ab1")
 	actions
 	{
 		Event Player.playerSpeed[False] += 30;
-		Set Gravity(Event Player, 35);
+		Set Gravity(Event Player, 28);
 		Call Subroutine(raycast_hit_position2);
 		Create Beam Effect(All Players(All Teams), Bad Beam, Event Player, Event Player.raycast_hit_position2, Color(Black),
 			Visible To Position and Radius);
 		Event Player.Effects[5] = Last Created Entity;
-		Start Accelerating(Event Player, Direction Towards(Event Player, Event Player.raycast_hit_position2), 20, 40, To World,
+		Start Accelerating(Event Player, Direction Towards(Event Player, Event Player.raycast_hit_position2), 25, 50, To World,
 			Direction Rate and Max Speed);
 		Start Rule(mei_spiderwoman_loop, Restart Rule);
 		Wait(0.250, Ignore Condition);
@@ -9669,7 +9665,7 @@ rule("William Tell subroutine")
 
 	actions
 	{
-		Apply Impulse(Event Player, Facing Direction Of(Event Player), 5, To World, Incorporate Contrary Motion);
+		Apply Impulse(Event Player, Facing Direction Of(Event Player), 7, To World, Incorporate Contrary Motion);
 		Wait(0.090, Ignore Condition);
 		Loop If(Ability Cooldown(Event Player, Button(Ability 1)) != Null);
 	}
@@ -10826,6 +10822,7 @@ rule("ULTIMATE SETUP #1: Sojourn, Ana, Lucio, Illari, Hanzo, Pharah, Baptiste, K
 					Start Rule(ultimate_ender, Restart Rule);
 					Small Message(All Players(All Teams), Custom String("{0} You cannot escape my sight", Hero Icon String(Hero Of(Event Player))));
 					While(Event Player.Is_Using_Ultimate);
+						Damage(Event Player.FoV_and_lineOFsight_player, Event Player, 125);
 						Event Player.J = Players Within Radius(Event Player.FoV_and_lineOFsight_player, 100, Opposite Team Of(Team Of(Event Player)),
 							Surfaces);
 						Skip If(Count Of(Remove From Array(Event Player.J, Event Player.FoV_and_lineOFsight_player)), 1);
@@ -10836,8 +10833,9 @@ rule("ULTIMATE SETUP #1: Sojourn, Ana, Lucio, Illari, Hanzo, Pharah, Baptiste, K
 								Event Player.T[Event Player.X] == Last Of(Event Player.T) ? -1 : 1)], Color(Yellow), Visible To Position and Radius);
 							Event Player.Effects[4] = Last Created Entity;
 							Damage(Event Player.T[Event Player.X], Event Player, 125);
-							Wait(0.300, Ignore Condition);
+							Wait(0.080, Ignore Condition);
 							Destroy Effect(Event Player.Effects[4]);
+							Wait(0.220, Ignore Condition);
 						End;
 						Event Player.FoV_and_lineOFsight_player = Last Of(Event Player.T);
 					End;
