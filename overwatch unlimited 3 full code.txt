@@ -45,14 +45,6 @@ settings
 			Scoring Speed Modifier: 77%
 		}
 
-		disabled Flashpoint April Fools
-		{
-			Capture Speed Modifier: 350%
-			First Active Control Point: Random
-			Score To Win: 5
-			Scoring Speed Modifier: 77%
-		}
-
 		Push
 		{
 			TS-1 Push Speed Modifier: 88%
@@ -100,7 +92,7 @@ settings
 
 			Bastion
 			{
-				Health: 85%
+				Health: 76%
 				Infinite Ultimate Duration: Enabled
 				Ultimate Duration: 260%
 				Ultimate Generation - Combat Configuration: Artillery: 200%
@@ -234,7 +226,7 @@ settings
 				Projectile Speed: 250%
 				Steel Trap Cooldown Time: 50%
 				Ultimate Duration: 135%
-				Ultimate Generation - Combat RIP-Tire: 250%
+				Ultimate Generation - Combat RIP-Tire: 200%
 				Ultimate Generation - Passive RIP-Tire: 120%
 				Ultimate Generation RIP-Tire: 130%
 			}
@@ -336,7 +328,8 @@ settings
 				Biotic Orb Cooldown Time: 110%
 				Fade Cooldown Time: 135%
 				Healing Received: 75%
-				Ultimate Generation - Combat Coalescence: 95%
+				Ultimate Generation - Combat Coalescence: 145%
+				Ultimate Generation Coalescence: 60%
 			}
 
 			Orisa
@@ -708,6 +701,7 @@ subroutines
 	45: solomon_ab1_loop
 	46: saint_lucy_subroutine
 	47: caster_gilgamesh_ab1
+	48: mei_remove_stalk_subroutine
 	51: simo_haya_invisibility_loop
 	52: tesla_cooldown_reset
 	54: frankenstein_good_loop
@@ -1099,7 +1093,9 @@ rule("ALL DAMAGE DEALT complete set 2")
 			End;
 		Else If(Hero Of(Event Player) == Hero(Zenyatta));
 			If(Event Player.selected_hero_list_number == Null && Event Ability == Button(Primary Fire) && Event Player.X);
-				Set Facing(Victim, Direction From Angles(Random Integer(False, 360), Random Integer(False, 360)), To World);
+				If(Is In View Angle(Victim, Event Player, 30));
+					Set Facing(Victim, Direction From Angles(Random Integer(False, 360), Random Integer(False, 360)), To World);
+				End;
 			Else If(Event Ability == Button(Secondary Fire) && Event Player.selected_hero_list_number == 1);
 				Set Ultimate Charge(Event Player, Ultimate Charge Percent(Event Player) + 10);
 				Set Ultimate Charge(Victim, Ultimate Charge Percent(Victim) - 10);
@@ -1618,7 +1614,7 @@ rule("Array list for All servants")
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
 				"Ab1: Damage people in LoS\n(Cancels when moved)\nAb2: Throw stun sphere\nULT: Shoot after to release ball\nFloor eats enemy hit"));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"Ab1: Charge Orb\nSpin=+Speed&Damage\nPr.Fire:Fire Orb\nSec.Fire: Orb follows enemy\nAb2: Suck enemy ULT\nULT:(PRESS)Revive&Damage ene"));
+				"Ab1: Charge ORB damage\nPr.Fire:Fire Orb\nSec.Fire: Orb follows enemy\nAb2: ULT steal ORB\nULT:(PRESSx2)Revive&Damage 40%"));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
 				"Ab1: Swap location with a player\nAb2: Create protection area\nULT: Black Hole"));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
@@ -1923,7 +1919,7 @@ rule("Become All Heroes 1")
 	actions
 	{
 		Wait Until(Evaluate Once(Hero Of(Event Player)) != Hero Of(Event Player) || !Is In Spawn Room(Event Player), 99999);
-		Skip If(Is In Spawn Room(Event Player), 427);
+		Skip If(Is In Spawn Room(Event Player), 428);
 		If(Hero Of(Event Player) == Hero(Hanzo));
 			If(Event Player.selected_hero_list_number == Null);
 				Event Player.playerSpeed[False] += 10;
@@ -1980,7 +1976,7 @@ rule("Become All Heroes 1")
 				Set Projectile Speed(Event Player, 150);
 				Disallow Button(Event Player, Button(Ability 2));
 				Set Projectile Speed(Event Player, 400);
-				Modify Global Variable(H, Append To Array, Event Player);
+				Modify Global Variable(S, Append To Array, Event Player);
 			Else If(Event Player.selected_hero_list_number == 5);
 				Event Player.playerSpeed[False] += 20;
 				Set Max Health(Event Player, 180);
@@ -2162,6 +2158,7 @@ rule("Become All Heroes 1")
 				Disallow Button(Event Player, Button(Ultimate));
 				Disallow Button(Event Player, Button(Ability 1));
 				Disallow Button(Event Player, Button(Ability 2));
+				Disallow Button(Event Player, Button(Secondary Fire));
 			Else If(Event Player.selected_hero_list_number == 3);
 				Event Player.playerSpeed[False] += 8;
 				Set Max Health(Event Player, 160);
@@ -2227,9 +2224,9 @@ rule("Become All Heroes 1")
 			End;
 		Else If(Hero Of(Event Player) == Hero(Echo));
 			If(Event Player.selected_hero_list_number == Null);
-				Set Max Health(Event Player, 150);
+				Set Max Health(Event Player, 175);
 				Event Player.playerSpeed[False] += 50;
-				Set Damage Dealt(Event Player, 90);
+				Set Damage Dealt(Event Player, 95);
 				Disallow Button(Event Player, Button(Ability 1));
 				Disallow Button(Event Player, Button(Ability 2));
 				Disallow Button(Event Player, Button(Secondary Fire));
@@ -2381,7 +2378,7 @@ rule("Become All Heroes 2")
 	actions
 	{
 		Wait Until(Evaluate Once(Hero Of(Event Player)) != Hero Of(Event Player) || !Is In Spawn Room(Event Player), 99999);
-		Skip If(Is In Spawn Room(Event Player), 371);
+		Skip If(Is In Spawn Room(Event Player), 370);
 		If(Hero Of(Event Player) == Hero(Mei));
 			Disallow Button(Event Player, Button(Ultimate));
 			If(Event Player.selected_hero_list_number == Null);
@@ -2517,6 +2514,7 @@ rule("Become All Heroes 2")
 			End;
 		Else If(Hero Of(Event Player) == Hero(Symmetra));
 			Disallow Button(Event Player, Button(Ability 2));
+			Modify Global Variable(H, Append To Array, Event Player);
 			If(Event Player.selected_hero_list_number == Null);
 				Event Player.playerSpeed[False] += 35;
 				Set Max Health(Event Player, 170);
@@ -2524,7 +2522,6 @@ rule("Become All Heroes 2")
 				Set Projectile Speed(Event Player, 500);
 				Disallow Button(Event Player, Button(Ultimate));
 				Set Gravity(Event Player, 75);
-				Modify Global Variable(S, Append To Array, Event Player);
 				Event Player.C = False;
 				Event Player.gilles_de_rais_damage = 1;
 			Else If(Event Player.selected_hero_list_number == 1);
@@ -2541,13 +2538,13 @@ rule("Become All Heroes 2")
 			Else If(Event Player.selected_hero_list_number == 2);
 				Event Player.playerSpeed[False] += 45;
 				Set Max Health(Event Player, 165);
-				Set Damage Dealt(Event Player, 130);
+				Set Damage Dealt(Event Player, 135);
 				Disallow Button(Event Player, Button(Secondary Fire));
 				Disallow Button(Event Player, Button(Ability 1));
 				Disallow Button(Event Player, Button(Ultimate));
 			Else If(Event Player.selected_hero_list_number == 3);
 				Event Player.playerSpeed[False] += 30;
-				Set Max Health(Event Player, 170);
+				Set Max Health(Event Player, 175);
 				Set Damage Dealt(Event Player, 115);
 				Disallow Button(Event Player, Button(Ultimate));
 			End;
@@ -2728,7 +2725,6 @@ rule("Become All Heroes 2")
 				Event Player.U = False;
 				Set Projectile Speed(Event Player, 55);
 				Event Player.H = 1500;
-				Modify Global Variable(S, Append To Array, Event Player);
 			Else If(Event Player.selected_hero_list_number == 4);
 				Event Player.playerSpeed[False] += 10;
 				Set Max Health(Event Player, 90);
@@ -2839,7 +2835,7 @@ rule("Become All Heroes 3")
 		Else If(Hero Of(Event Player) == Hero(Tracer));
 			Event Player.playerSpeed[False] += 15;
 			If(Event Player.selected_hero_list_number == 1);
-				Set Damage Dealt(Event Player, 170);
+				Set Damage Dealt(Event Player, 150);
 				Set Max Health(Event Player, 175);
 			Else;
 				Disallow Button(Event Player, Button(Ability 2));
@@ -4107,19 +4103,31 @@ rule("All Mei Ab1 (marie pull and surtr smash)")
 	{
 		((Is Button Held(Event Player, Button(Ability 1)) && Ability Cooldown(Event Player, Button(Ability 1)) == 0) || Is Using Ability 1(
 			Event Player)) == True;
+		Is In Spawn Room(Event Player) == False;
 	}
 
 	actions
 	{
 		If(Event Player.selected_hero_list_number == Null);
+			Event Player.V = True;
+			Event Player.X = 0;
 			Call Subroutine(FoV_and_LoS_player_select);
+			Event Player.FoV_and_lineOFsight_player.playerSpeed[False] -= 30;
+			Start Rule(mei_remove_stalk_subroutine, Restart Rule);
+			Create Progress Bar In-World Text(Remove From Array(All Players(All Teams), Event Player), Event Player.X, Custom String(
+				"Mei Escape {0}", Hero Icon String(Hero(Mei))), Update Every Frame(Eye Position(Event Player)), 0.600, Clip Against Surfaces,
+				Color(Aqua), Color(White), Visible To Position Values and Color, Default Visibility);
+			Event Player.Effects[5] = Last Text ID;
 			Small Message(Event Player.FoV_and_lineOFsight_player, Custom String("{0} charmed you", Hero Icon String(Hero(Mei))));
 			Start Throttle In Direction(Event Player.FoV_and_lineOFsight_player, Direction Towards(Event Player.FoV_and_lineOFsight_player,
 				Event Player), 1, To World, Replace existing throttle, Direction and Magnitude);
 			Wait(0.100, Ignore Condition);
-			Wait Until(Is Dead(Event Player) || Is In View Angle(Event Player.FoV_and_lineOFsight_player, Event Player, 15), 5);
+			Wait Until(Is Dead(Event Player) || Is In Spawn Room(Event Player) || Event Player.X >= 100, 8);
+			Destroy Progress Bar In-World Text(Event Player.Effects[5]);
 			Stop Throttle In Direction(Event Player.FoV_and_lineOFsight_player);
-			Set Ability Cooldown(Event Player, Button(Ability 1), 9);
+			Set Ability Cooldown(Event Player, Button(Ability 1), 12);
+			Event Player.V = False;
+			Event Player.FoV_and_lineOFsight_player.playerSpeed[False] += 30;
 		Else If(Event Player.selected_hero_list_number == 1);
 			Start Heal Over Time(Event Player, Null, 3, 60);
 			Wait Until(!Is Using Ability 1(Event Player), 10);
@@ -6029,8 +6037,8 @@ rule("All shift barrage || Moira Ab1")
 				Color(Sky Blue), None);
 			Event Player.Effects[4] = Last Created Entity;
 			Play Effect(All Players(All Teams), Bad Explosion, Color(Sky Blue), Event Player.raycast_hit_position2, 6);
-			Damage(Players Within Radius(Event Player.raycast_hit_position2, 4, All Teams, Surfaces And Enemy Barriers), Event Player, 70 * (
-				1 + Ultimate Charge Percent(Event Player) / 260));
+			Damage(Players Within Radius(Event Player.raycast_hit_position2, 4, All Teams, Surfaces And Enemy Barriers), Event Player, 75 * (
+				1 + Ultimate Charge Percent(Event Player) / 300));
 			Wait(0.150, Ignore Condition);
 			Destroy Effect(Event Player.Effects[4]);
 			Wait(True, Ignore Condition);
@@ -6070,7 +6078,6 @@ rule("All moira  jump ability || Ashe Xanzang Dash")
 
 	conditions
 	{
-		Is Jumping(Event Player) == True;
 		Is Button Held(Event Player, Button(Jump)) == True;
 		Is Button Held(Event Player, Button(Crouch)) == True;
 		(Has Status(Event Player, Frozen) || Has Status(Event Player, Stunned) || Has Status(Event Player, Knocked Down)) == False;
@@ -7435,21 +7442,16 @@ rule("All ab1 & ab2 Zenyatta")
 			End;
 		Else If(Event Player.selected_hero_list_number == 1);
 			If(Is Button Held(Event Player, Button(Ability 1)));
-				Call Subroutine(raycast_hit_position2);
-				Create Effect(All Players(All Teams), Light Shaft, Color(Red), Event Player.raycast_hit_position2, 8,
-					Visible To Position and Radius);
-				Event Player.Effects[2] = Last Created Entity;
-				Event Player.filtered_array = Filtered Array(All Living Players(Opposite Team Of(Team Of(Event Player))), Is In Line of Sight(
-					Event Player.raycast_hit_position2, Current Array Element, Barriers Do Not Block LOS) && Distance Between(Vector(
-					X Component Of(Event Player.raycast_hit_position2), False, Z Component Of(Event Player.raycast_hit_position2)), Vector(
-					X Component Of(Position Of(Current Array Element)), False, Z Component Of(Position Of(Current Array Element)))) <= 8);
-				Damage(Event Player.filtered_array, Event Player, 20);
-				Apply Impulse(Event Player.filtered_array, Down, 10000, To World, Incorporate Contrary Motion);
-				Set Status(Event Player.filtered_array, Null, Rooted, True);
-				Wait(0.150, Ignore Condition);
-				Destroy Effect(Event Player.Effects[2]);
-				Play Effect(All Players(All Teams), Debuff Impact Sound, Color(Red), Event Player.raycast_hit_position2, 150);
-				Wait(9, Ignore Condition);
+				Call Subroutine(FoV_and_LoS_player_select);
+				Event Player.FoV_and_lineOFsight_player.playerSpeed[False] -= 20;
+				Damage(Event Player.FoV_and_lineOFsight_player, Event Player, 20);
+				Wait(0.100, Ignore Condition);
+				Set Gravity(Event Player.FoV_and_lineOFsight_player, 0);
+				Set Status(Event Player.FoV_and_lineOFsight_player, Event Player, Burning, 3);
+				Wait(3, Ignore Condition);
+				Event Player.playerSpeed[False] += 20;
+				Set Gravity(Event Player.FoV_and_lineOFsight_player, 100);
+				Wait(12, Ignore Condition);
 				Small Message(Event Player, Custom String("Ability 1 available"));
 			End;
 		Else If(Event Player.selected_hero_list_number == 2 && Is Button Held(Event Player, Button(Ability 2)));
@@ -9635,13 +9637,14 @@ rule("William Tell ab1")
 	actions
 	{
 		Event Player.playerSpeed[False] += 30;
-		Set Gravity(Event Player, 28);
+		Set Gravity(Event Player, 30);
 		Call Subroutine(raycast_hit_position2);
 		Create Beam Effect(All Players(All Teams), Bad Beam, Event Player, Event Player.raycast_hit_position2, Color(Black),
 			Visible To Position and Radius);
 		Event Player.Effects[5] = Last Created Entity;
-		Start Accelerating(Event Player, Direction Towards(Event Player, Event Player.raycast_hit_position2), 25, 50, To World,
+		Start Accelerating(Event Player, Direction Towards(Event Player, Event Player.raycast_hit_position2), 20, 60, To World,
 			Direction Rate and Max Speed);
+		Event Player.V = True;
 		Start Rule(mei_spiderwoman_loop, Restart Rule);
 		Wait(0.250, Ignore Condition);
 		Wait Until(Is Dead(Event Player) || Is In Spawn Room(Event Player) || Is Button Held(Event Player, Button(Ability 1))
@@ -9652,6 +9655,7 @@ rule("William Tell ab1")
 		Stop Accelerating(Event Player);
 		Set Gravity(Event Player, 100);
 		Set Ability Cooldown(Event Player, Button(Ability 1), 8.500);
+		Event Player.V = False;
 	}
 }
 
@@ -9665,9 +9669,9 @@ rule("William Tell subroutine")
 
 	actions
 	{
-		Apply Impulse(Event Player, Facing Direction Of(Event Player), 7, To World, Incorporate Contrary Motion);
+		Apply Impulse(Event Player, Facing Direction Of(Event Player), 6, To World, Incorporate Contrary Motion);
 		Wait(0.090, Ignore Condition);
-		Loop If(Ability Cooldown(Event Player, Button(Ability 1)) != Null);
+		Loop If(Event Player.V);
 	}
 }
 
@@ -9991,8 +9995,8 @@ rule("JUNKRAT all damage to, the fall damage AND Trap make you 50%")
 				End;
 				Wait(0.100, Ignore Condition);
 			End;
-			Small Message(Event Player, Custom String("Fall damage {0}", Attacker.F[Slot Of(Event Player)] * 13));
-			Damage(Event Player, Attacker, 11 * Attacker.F[Slot Of(Event Player)]);
+			Small Message(Event Player, Custom String("Fall damage {0}", Attacker.F[Slot Of(Event Player)] * 8.500));
+			Damage(Event Player, Attacker, 8.500 * Attacker.F[Slot Of(Event Player)]);
 		Else If(Event Ability == Button(Ability 2));
 			Set Player Health(Event Player, Health(Event Player) / 2);
 	}
@@ -14253,5 +14257,23 @@ rule("hazard take damage with right click")
 			Apply Impulse(Event Player, Event Direction, 25, To World, Incorporate Contrary Motion);
 		Else If(Event Ability == Button(Ability 2));
 			Set Status(Event Player, Null, Knocked Down, 1.500);
+	}
+}
+
+rule("Mei remove charming hypnotise ability 1 by looking enough")
+{
+	event
+	{
+		Subroutine;
+		mei_remove_stalk_subroutine;
+	}
+
+	actions
+	{
+		If(Is In View Angle(Event Player.FoV_and_lineOFsight_player, Event Player, 25));
+			Event Player.X += 5.250;
+		End;
+		Wait(0.090, Ignore Condition);
+		Loop If(Event Player.V);
 	}
 }
