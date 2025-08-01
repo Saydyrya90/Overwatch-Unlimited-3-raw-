@@ -404,8 +404,8 @@ settings
 				Power Slide Cooldown Time: 95%
 				Projectile Speed: 125%
 				Railgun Alt Fire Energy Charge Rate: 120%
-				Ultimate Generation - Combat Overclock: 160%
-				Ultimate Generation Overclock: 145%
+				Ultimate Generation - Combat Overclock: 140%
+				Ultimate Generation Overclock: 140%
 			}
 
 			Soldier: 76
@@ -493,7 +493,7 @@ settings
 				Adaptive Shield Cooldown Time: 103%
 				Damage Dealt: 80%
 				Grappling Claw Cooldown Time: 80%
-				Grappling Claw Knockback Scalar: 30%
+				Grappling Claw Knockback Scalar: 75%
 				Health: 75%
 				Minefield Knockback Scalar: 400%
 				Movement Speed: 115%
@@ -1837,9 +1837,9 @@ rule("Array list for All servants")
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("L.H. Osvald"), Custom String(
 				"HeadHunter")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"Ab1: Unkillable +healing\nAb2: Chain enemy to the ground\nULT: Share Freedom with Enemies"));
+				"Ab1: Unkillable+healing\nAb2: Chain enemy to the ground\nULT: Share Freedom with Enemies"));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"Ab1: Unkillable +healing\nAb2: 2.5s->Linked enemy stun\nULT: Deadly Gas Area"));
+				"Ab1: Unkillable+healing\nAb2: Cripple linked enemy\nULT: Deadly Gas Area"));
 		Else If(Hero Of(Event Player) == Hero(Kiriko));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Popa Francesco"), Custom String(
 				"Kento Nanami")));
@@ -1851,7 +1851,7 @@ rule("Array list for All servants")
 		Else If(Hero Of(Event Player) == Hero(Junkrat));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Osmama Bindalen")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
-				"Ab1: Give fall damage to enemy\nAb2: Trap damage makes enemy 50%HP\nULT: Inverted Floor Is Lava"));
+				"Ab1: Give fall damage to enemy\nAb2: -50%HP enemy in trap\nULT: Ground safe, in air damage you"));
 		Else If(Hero Of(Event Player) == Hero(Junker Queen));
 			Modify Player Variable(Event Player, Selected_Hero, Append To Array, Array(Custom String("Jeffen Einstein")));
 			Modify Player Variable(Event Player, All_explanation_text, Append To Array, Custom String(
@@ -2378,7 +2378,7 @@ rule("Become All Heroes 2")
 	actions
 	{
 		Wait Until(Evaluate Once(Hero Of(Event Player)) != Hero Of(Event Player) || !Is In Spawn Room(Event Player), 99999);
-		Skip If(Is In Spawn Room(Event Player), 370);
+		Skip If(Is In Spawn Room(Event Player), 371);
 		If(Hero Of(Event Player) == Hero(Mei));
 			Disallow Button(Event Player, Button(Ultimate));
 			If(Event Player.selected_hero_list_number == Null);
@@ -2500,7 +2500,7 @@ rule("Become All Heroes 2")
 				Disallow Button(Event Player, Button(Ability 2));
 				Disallow Button(Event Player, Button(Ability 1));
 				Modify Global Variable(L, Append To Array, Event Player);
-				Modify Global Variable(S, Append To Array, Event Player);
+				Modify Global Variable(H, Append To Array, Event Player);
 			End;
 		Else If(Hero Of(Event Player) == Hero(Sombra));
 			Disallow Button(Event Player, Button(Ultimate));
@@ -2514,7 +2514,7 @@ rule("Become All Heroes 2")
 			End;
 		Else If(Hero Of(Event Player) == Hero(Symmetra));
 			Disallow Button(Event Player, Button(Ability 2));
-			Modify Global Variable(H, Append To Array, Event Player);
+			Modify Global Variable(L, Append To Array, Event Player);
 			If(Event Player.selected_hero_list_number == Null);
 				Event Player.playerSpeed[False] += 35;
 				Set Max Health(Event Player, 170);
@@ -2547,6 +2547,7 @@ rule("Become All Heroes 2")
 				Set Max Health(Event Player, 175);
 				Set Damage Dealt(Event Player, 115);
 				Disallow Button(Event Player, Button(Ultimate));
+				Modify Global Variable(S, Append To Array, Event Player);
 			End;
 		Else If(Hero Of(Event Player) == Hero(Widowmaker));
 			Event Player.playerSpeed[False] += 25;
@@ -2778,7 +2779,7 @@ rule("Become All Heroes 3")
 	actions
 	{
 		Wait Until(Evaluate Once(Hero Of(Event Player)) != Hero Of(Event Player) || !Is In Spawn Room(Event Player), 99999);
-		Skip If(Is In Spawn Room(Event Player), 198);
+		Skip If(Is In Spawn Room(Event Player), 199);
 		If(Hero Of(Event Player) == Hero(Zenyatta));
 			If(Event Player.selected_hero_list_number == Null);
 				Event Player.playerSpeed[False] += 20;
@@ -2927,6 +2928,7 @@ rule("Become All Heroes 3")
 			Disallow Button(Event Player, Button(Ultimate));
 			If(Event Player.selected_hero_list_number);
 				Disallow Button(Event Player, Button(Ability 2));
+				Modify Global Variable(S, Append To Array, Event Player);
 			End;
 		Else If(Hero Of(Event Player) == Hero(Torbjörn));
 			If(Event Player.selected_hero_list_number);
@@ -3441,12 +3443,12 @@ rule("gilgamesh key of babylon  ab 2 1/3")
 		Play Effect(All Players(All Teams), DVa Micro Missiles Explosion Effect, Color(Team 2), Event Player.raycast_hit_position, 2);
 		Play Effect(All Players(All Teams), Explosion Sound, Color(Orange), Event Player.raycast_hit_position, 125);
 		If(Entity Exists(Event Player.raycast_hit_player));
-			Damage(Event Player.raycast_hit_player, Event Player, 30);
+			Damage(Event Player.raycast_hit_player, Event Player, 20);
 			Damage(Remove From Array(Players Within Radius(Event Player.raycast_hit_player, 3, All Teams, Surfaces), Array(Event Player,
-				Event Player.raycast_hit_player)), Event Player, 14);
+				Event Player.raycast_hit_player)), Event Player, 11);
 		Else;
 			Damage(Remove From Array(Players Within Radius(Event Player.raycast_hit_position, 3, All Teams, Surfaces), Event Player),
-				Event Player, 14);
+				Event Player, 11);
 		End;
 		Set Ultimate Charge(Event Player, Ultimate Charge Percent(Event Player) - 0.700);
 		Wait(0.020, Ignore Condition);
@@ -5695,11 +5697,11 @@ rule("All soldiers Ab1")
 			Small Message(Event Player, Custom String("{0} {1}", Custom String("You can use ab1")));
 		Else If(Event Player.selected_hero_list_number == 4);
 			Set Gravity(Event Player, 5);
-			Apply Impulse(Event Player, Up, 5, To World, Cancel Contrary Motion);
+			Apply Impulse(Event Player, Up, 3, To World, Cancel Contrary Motion);
 			Wait(0.250, Ignore Condition);
 			Wait Until(Is Button Held(Event Player, Button(Ability 1)) || Is Assembling Heroes, 2.500);
 			Set Gravity(Event Player, 100);
-			Wait(6, Ignore Condition);
+			Wait(4, Ignore Condition);
 		Else If(Event Player.selected_hero_list_number == 5);
 			Stop Facing(Event Player.Solomon_pillar_array);
 			Call Subroutine(FoV_and_LoS_player_select);
@@ -10589,9 +10591,9 @@ rule("Winston Slow AoE ability RULE")
 	actions
 	{
 		Event Player.playerSpeed[False] -= 20;
-		Disallow Button(Event Player, Button(Jump));
+		disabled Disallow Button(Event Player, Button(Jump));
 		Wait Until(Is True For All(Global.Winston_Slow_Areas, Distance Between(Current Array Element, Event Player) > 13), 99999);
-		Allow Button(Event Player, Button(Jump));
+		disabled Allow Button(Event Player, Button(Jump));
 		Event Player.playerSpeed[False] += 20;
 		Wait(0.100, Ignore Condition);
 	}
@@ -12652,13 +12654,14 @@ rule("ULTIMATE SETUP #3: Echo, Roadhog, Mei, Sigma, Bastion, Mercy, Briggite, Re
 				Cancel Primary Action(Event Player);
 				Call Subroutine(FoV_and_LoS_player_select);
 				Set Status(Event Player, Null, Phased Out, 6);
-				Skip If(!Event Player.FoV_and_lineOFsight_player, 12);
-				Start Camera(Event Player, Event Player.FoV_and_lineOFsight_player + Vector(0, 5, 0), Event Player.FoV_and_lineOFsight_player,
-					200);
+				Skip If(!Event Player.FoV_and_lineOFsight_player, 14);
+				Disallow Button(Event Player.FoV_and_lineOFsight_player, Button(Crouch));
+				Start Camera(Event Player, Update Every Frame(Eye Position(Event Player.FoV_and_lineOFsight_player) - Facing Direction Of(
+					Event Player)), Eye Position(Event Player.FoV_and_lineOFsight_player) + Facing Direction Of(Event Player), 200);
 				Set Move Speed(Event Player, 1);
 				Start Throttle In Direction(Event Player.FoV_and_lineOFsight_player, Throttle Of(Event Player), 1, To Player,
 					Replace existing throttle, Direction and Magnitude);
-				Start Facing(Event Player.FoV_and_lineOFsight_player, Facing Direction Of(Event Player), 1000, To World, Direction and Turn Rate);
+				Start Facing(Event Player.FoV_and_lineOFsight_player, Facing Direction Of(Event Player), 360, To World, Direction and Turn Rate);
 				Small Message(Event Player, Event Player.FoV_and_lineOFsight_player);
 				Wait Until(Is Dead(Event Player.FoV_and_lineOFsight_player), 8);
 				Stop Transforming Throttle(Event Player.FoV_and_lineOFsight_player);
@@ -12667,6 +12670,7 @@ rule("ULTIMATE SETUP #3: Echo, Roadhog, Mei, Sigma, Bastion, Mercy, Briggite, Re
 				Set Move Speed(Event Player, 100);
 				Stop Camera(Event Player);
 				Stop Throttle In Direction(Event Player.FoV_and_lineOFsight_player);
+				Allow Button(Event Player.FoV_and_lineOFsight_player, Button(Crouch));
 			End;
 		Else If(Hero Of(Event Player) == Hero(Widowmaker));
 			If(Event Player.selected_hero_list_number);
@@ -13806,12 +13810,10 @@ rule("Soujourn 2 trap snare")
 			Visible To Position and Radius);
 		Event Player.Effects[1] = Last Created Entity;
 		Wait Until(!Is In Line of Sight(Event Player, Event Player.FoV_and_lineOFsight_player, Barriers Do Not Block LOS), 2.500);
-		Event Player.FoV_and_lineOFsight_player = Is In Line of Sight(Event Player, Event Player.FoV_and_lineOFsight_player,
-			Barriers Do Not Block LOS) ? Event Player.FoV_and_lineOFsight_player : Null;
 		Destroy Effect(Event Player.Effects[1]);
-		Damage(Event Player.FoV_and_lineOFsight_player, Event Player, 80);
-		Set Status(Event Player.FoV_and_lineOFsight_player, Null, Stunned, 2);
-		Set Ability Cooldown(Event Player, Button(Ability 2), 12);
+		Set Ability Cooldown(Event Player, Button(Ability 2), 13);
+		Skip If(!Is In Line of Sight(Event Player, Event Player.FoV_and_lineOFsight_player, Barriers Do Not Block LOS), 1);
+		Event Player.FoV_and_lineOFsight_player.Is_Crippled = True;
 	}
 }
 
@@ -14271,7 +14273,7 @@ rule("Mei remove charming hypnotise ability 1 by looking enough")
 	actions
 	{
 		If(Is In View Angle(Event Player.FoV_and_lineOFsight_player, Event Player, 25));
-			Event Player.X += 5.250;
+			Event Player.X += 6.500;
 		End;
 		Wait(0.090, Ignore Condition);
 		Loop If(Event Player.V);
